@@ -1,0 +1,77 @@
+
+
+Домашнее задание к уроку 17.3:
+1. Написать запрос для выбора студентов в порядке их регистрации на сервисе.
+
+
+mysql> SELECT * FROM Students ORDER BY registration_date\g
+
+
+2. Написать запрос для выбора 5 самых дорогих курсов, на которых более 4 студентов, и которые длятся более 10 часов.
+
+
+SELECT Name, Price FROM Courses WHERE (students_count >4 and duration >10) ORDER BY Price DESC LIMIT 5\g
+
+
+3. Написать один (!) запрос, который выведет одновременно список из имен трёх самых молодых студентов, имен трёх самых старых учителей и названий трёх самых продолжительных курсов.
+
+
+(SELECT Name, Age FROM Students ORDER BY age LIMIT 3) UNION ALL (SELECT Name, Age FROM Teachers ORDER BY age DESC LIMIT 3) UNION (SELECT Duration, Name FROM Courses ORDER BY Duration DESC LIMIT 3);\g
+
+
+Домашнее задание к уроку 17.4:
+1. Написать запрос для выбора среднего возраста всех учителей с зарплатой более 10 000.
+
+
+SELECT AVG(age) FROM Teachers WHERE salary > 10000;
+
+
+2. Написать запрос для расчета суммы, сколько будет стоить купить все курсы по дизайну.
+
+
+SELECT SUM(price) FROM Courses WHERE Type = "DESIGN"\g
+
+
+3. Написать запрос для расчёта, сколько минут (!) длятся все курсы по программированию.
+
+
+SELECT SUM(duration*60) AS Duration_in_minutes FROM Courses WHERE Type = "PROGRAMMING"\g
+
+
+Домашнее задание к уроку 17.5:
+В этому уроке нет ДЗ.
+
+
+Домашнее задание к уроку 17.6:
+1. Напишите запрос, который выводит сумму, сколько часов должен в итоге проучиться каждый студент (сумма длительности всех курсов на которые он подписан). В результате запрос возвращает две колонки: Имя Студента — Кол-во часов.
+
+
+### Напишите Ваш запрос здесь ###
+
+SELECT Students.name AS Student_name, SUM(duration) AS Sum_duration FROM Courses
+JOIN Subscriptions ON Courses.id = Subscriptions.course_id
+JOIN Students ON Students.id = Subscriptions.student_id
+GROUP BY Student_name;
+
+
+2. Напишите запрос, который посчитает для каждого учителя средний возраст его учеников.
+В результате запрос возвращает две колонки: Имя Учителя — Средний Возраст Учеников.
+
+
+### Напишите Ваш запрос здесь ###
+
+SELECT Teachers.name AS Teacher_name, AVG(Students.age) AS Mean_students_age FROM Teachers
+JOIN Courses ON Teachers.id = Courses.teacher_id
+JOIN Subscriptions ON Courses.id = Subscriptions.course_id
+JOIN Students ON Subscriptions.student_id = Students.id
+GROUP BY Teacher_name;
+
+
+3. Напишите запрос, который выводит среднюю зарплату учителей для каждого типа курса (Дизайн/Программирование/Маркетинг и т.д.) В результате запрос возвращает две колонки: Тип Курса – Средняя зарплата.
+
+### Напишите Ваш запрос здесь ###
+
+SELECT Courses.name AS Course_name, AVG(Teachers.salary) AS Mean_salary FROM Teachers
+JOIN Courses ON Teachers.id = Courses.teacher_id
+GROUP BY Courses.name;
+
